@@ -23,7 +23,7 @@ func main() {
 	if env == "dev" {
 		chatFile = "chats.json"
 	} else {
-		chatFile = "chats.json"
+		chatFile = "/app/data/chats.json"
 	}
 
 	chatIDs = chat.LoadChatIDs(chatFile)
