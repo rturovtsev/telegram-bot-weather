@@ -45,10 +45,17 @@ func main() {
 	updates := bot.GetUpdatesChan(u)
 
 	for update := range updates {
-		if update.Message == nil {
+		if update.Message != nil {
+			chat.AddChatID(update.Message.Chat.ID, chatFile)
+		} else if update.MyChatMember != nil {
+			if update.MyChatMember.NewChatMember.Status == "administrator" {
+				if update.MyChatMember.Chat.Type == "channel" {
+					chat.AddChatID(update.MyChatMember.Chat.ID, chatFile) // добавим ID канала, если бот стал администратором
+				}
+			}
+		} else {
 			continue
 		}
-		chat.AddChatID(update.Message.Chat.ID, chatFile)
 
 		log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
 	}
