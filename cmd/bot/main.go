@@ -50,7 +50,7 @@ func main() {
 			if update.MyChatMember.NewChatMember.Status == "administrator" {
 				if update.MyChatMember.Chat.Type == "channel" {
 					chat.AddChatID(update.MyChatMember.Chat.ID, chatFile) // добавим ID канала, если бот стал администратором
-					log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
+					log.Printf("[%s] %s", update.MyChatMember.From.UserName, update.MyChatMember.Chat.Title)
 				}
 			}
 		} else {
