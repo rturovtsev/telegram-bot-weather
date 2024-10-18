@@ -13,6 +13,7 @@ var chatFile string
 
 func main() {
 	botToken := os.Getenv("BOT_TOKEN")
+	yandexToken := os.Getenv("YANDEX_TOKEN")
 	env := os.Getenv("ENV")
 
 	if botToken == "" {
@@ -35,7 +36,7 @@ func main() {
 
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
-	handler.ScheduleMessage(bot, chatIDs)
+	handler.ScheduleMessage(bot, chatIDs, yandexToken)
 
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60

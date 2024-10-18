@@ -58,6 +58,7 @@ jobs:
           GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
           GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          YANDEX_TOKEN: ${{ secrets.YANDEX_TOKEN }}
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
             echo $GHCR_TOKEN | docker login ghcr.io -u $GHCR_USERNAME --password-stdin &&
@@ -68,5 +69,5 @@ jobs:
             docker rm tg_bot_weather || true &&
             echo 'Running new container with BOT_TOKEN' &&
             echo \$BOT_TOKEN &&
-            docker run -d --name tg_bot_weather --restart on-failure -v $HOME/tg_bot_weather:/app/data -e BOT_TOKEN=$BOT_TOKEN ghcr.io/$GHCR_USERNAME/tg_bot_weather:latest
+            docker run -d --name tg_bot_weather --restart on-failure -v $HOME/tg_bot_weather:/app/data -e BOT_TOKEN=$BOT_TOKEN -e YANDEX_TOKEN=$YANDEX_TOKEN ghcr.io/$GHCR_USERNAME/tg_bot_weather:latest
           "
