@@ -63,6 +63,14 @@ func main() {
 					chat.AddChatID(update.Message.Chat.ID, chatFile)
 					log.Printf("Добавление в личный чат [%s] %s", update.Message.From.UserName, update.Message.Text)
 				}
+			} else if chatType == "group" || chatType == "supergroup" {
+				if update.MyChatMember.NewChatMember.Status == "member" {
+					chat.AddChatID(update.MyChatMember.Chat.ID, chatFile) // Добавить ID группы
+					log.Printf("Добавление в группу [%s] %s", update.MyChatMember.From.UserName, update.MyChatMember.Chat.Title)
+				} else if update.MyChatMember.NewChatMember.Status == "left" || update.MyChatMember.NewChatMember.Status == "kicked" {
+					chat.RemoveChatID(update.MyChatMember.Chat.ID, chatFile) // Удалить ID группы
+					log.Printf("Удаление из группы [%s] %s", update.MyChatMember.From.UserName, update.MyChatMember.Chat.Title)
+				}
 			} else {
 				continue
 			}
