@@ -48,3 +48,17 @@ func AddChatID(chatID int64, chatFile string) {
 	chatIDs = append(chatIDs, chatID)
 	SaveChatIDs(chatFile)
 }
+
+func RemoveChatID(chatID int64, chatFile string) {
+	index := -1
+	for i, id := range chatIDs {
+		if id == chatID {
+			index = i
+			break
+		}
+	}
+	if index != -1 {
+		chatIDs = append(chatIDs[:index], chatIDs[index+1:]...)
+		SaveChatIDs(chatFile)
+	}
+}

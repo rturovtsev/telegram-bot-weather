@@ -44,18 +44,28 @@ func main() {
 	updates := bot.GetUpdatesChan(u)
 
 	for update := range updates {
-		if update.Message != nil {
-			chat.AddChatID(update.Message.Chat.ID, chatFile)
-			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
-		} else if update.MyChatMember != nil {
-			if update.MyChatMember.NewChatMember.Status == "administrator" {
-				if update.MyChatMember.Chat.Type == "channel" {
+		if update.MyChatMember != nil {
+			chatType := update.MyChatMember.Chat.Type
+
+			if chatType == "channel" {
+				if update.MyChatMember.NewChatMember.Status == "administrator" {
 					chat.AddChatID(update.MyChatMember.Chat.ID, chatFile) // добавим ID канала, если бот стал администратором
-					log.Printf("[%s] %s", update.MyChatMember.From.UserName, update.MyChatMember.Chat.Title)
+					log.Printf("Добавление в канал [%s] %s", update.MyChatMember.From.UserName, update.MyChatMember.Chat.Title)
+				} else if update.MyChatMember.NewChatMember.Status == "left" || update.MyChatMember.NewChatMember.Status == "kicked" || update.MyChatMember.NewChatMember.Status == "member" {
+					chat.RemoveChatID(update.MyChatMember.Chat.ID, chatFile)
+					log.Printf("Удаление из канала [%s] %s", update.MyChatMember.From.UserName, update.MyChatMember.Chat.Title)
 				}
+			} else if chatType == "private" {
+				if update.MyChatMember.NewChatMember.Status == "left" || update.MyChatMember.NewChatMember.Status == "kicked" {
+					chat.RemoveChatID(update.Message.Chat.ID, chatFile)
+					log.Printf("Удаление из личного чата [%s] %s", update.Message.From.UserName, update.Message.Text)
+				} else {
+					chat.AddChatID(update.Message.Chat.ID, chatFile)
+					log.Printf("Добавление в личный чат [%s] %s", update.Message.From.UserName, update.Message.Text)
+				}
+			} else {
+				continue
 			}
-		} else {
-			continue
 		}
 	}
 }
