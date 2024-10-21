@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 const TverURL = "https://api.weather.yandex.ru/v2/forecast?lat=56.83270&lon=35.93039"
@@ -22,12 +23,11 @@ func GetWeather(url string, token string) string {
 
 	dayShort := weather.Forecasts[0].Parts.DayShort
 	tempMin := dayShort.TempMin
-	//tempMax := dayShort.TempMax
 	tempMax := dayShort.Temp
 	windSpeed := dayShort.WindSpeed
 	windGust := dayShort.WindGust
 
-	umbrellaNeeded, rainHours := checkForRain(weather.Forecasts[0].Hours)
+	umbrellaNeeded, rainHours := checkForRainBlocks(weather.Forecasts[0].Hours)
 
 	switch condition {
 	case "clear":
@@ -70,13 +70,13 @@ func GetWeather(url string, token string) string {
 	if !umbrellaNeeded {
 		umbrellaText = "Зонт не нужен"
 	} else {
-		umbrellaText = fmt.Sprintf("Зонт нужен с %s с вероятностью %d%%", rainHours, int(dayShort.PrecProb))
+		umbrellaText = fmt.Sprintf("Зонт нужен %s с вероятностью %d%%", rainHours, int(dayShort.PrecProb))
 	}
 
 	text := fmt.Sprintf(
 		"%s\nТемпература сейчас %.0f°C, %s, ощущается как %.0f°C\n"+
 			"В течение дня температура от %.0f°C до %.0f°C\n"+
-			"В течение дня ветер %.1f м/с, порывы до %.1f м/с",
+			"Ветер %.1f м/с, порывы до %.1f м/с",
 		umbrellaText,
 		factTemp,
 		condition,
@@ -90,11 +90,11 @@ func GetWeather(url string, token string) string {
 	return text
 }
 
-func checkForRain(hours []model.Hour) (bool, string) {
+func checkForRainBlocks(hours []model.Hour) (bool, string) {
 	umbrellaNeeded := false
-	rainHours := ""
-	rainHoursStart := ""
-	rainHoursEnd := ""
+	var rainHours []string
+	var rainHoursArs [][]int
+	var tmpHour []int
 
 	for _, hour := range hours {
 		hourInt, err := strconv.Atoi(hour.Hour)
@@ -104,17 +104,46 @@ func checkForRain(hours []model.Hour) (bool, string) {
 
 		if hour.PrecType != 0 {
 			umbrellaNeeded = true
-			if rainHoursStart == "" {
-				rainHoursStart = hour.Hour + ":00"
-			} else {
-				rainHoursEnd = hour.Hour + ":00"
+			tmpHour = append(tmpHour, hourInt)
+		} else {
+			if len(tmpHour) > 0 {
+				rainHoursArs = append(rainHoursArs, tmpHour)
+				tmpHour = nil
 			}
 		}
 	}
 
-	rainHours = fmt.Sprintf("%s до %s:00", rainHoursStart, rainHoursEnd)
+	if tmpHour != nil {
+		rainHoursArs = append(rainHoursArs, tmpHour)
+	}
 
-	return umbrellaNeeded, rainHours
+	for _, item := range rainHoursArs {
+		if len(item) == 1 {
+			rainHours = append(rainHours, fmt.Sprintf("в %d:00", item[0]))
+		} else {
+			rainHours = append(rainHours, fmt.Sprintf("с %d:00 до %d:00", item[0], item[len(item)-1]))
+		}
+	}
+
+	rainHoursStr := joinWithCommaAnd(rainHours)
+
+	return umbrellaNeeded, rainHoursStr
+}
+
+func joinWithCommaAnd(strArr []string) string {
+	if len(strArr) == 0 {
+		return ""
+	}
+
+	if len(strArr) == 1 {
+		return strArr[0]
+	}
+
+	if len(strArr) == 2 {
+		return strArr[0] + " и " + strArr[1]
+	}
+
+	return strings.Join(strArr[:len(strArr)-1], ", ") + " и " + strArr[len(strArr)-1]
 }
 
 func makeRequest(url string, token string) (weatherResponse *model.Response) {

@@ -42,17 +42,16 @@ func ScheduleMessage(bot *tgbotapi.BotAPI, chatIDs []int64, token string) {
 					log.Println("Ошибка при сохранении изображения:", err)
 					continue
 				}
-				txt := "Тверь\n"
+				txt := "Прогноз магнитных бурь на три дня\n\n"
+				txt += "================\n\n"
+				txt += "Тверь\n"
 				txt += weather.GetWeather(weather.TverURL, token)
 				txt += "\n\nСколково\n"
 				txt += weather.GetWeather(weather.MoscowURL, token)
 
-				weatherMessage := tgbotapi.NewMessage(chatID, txt)
-				bot.Send(weatherMessage)
-
 				photo := tgbotapi.FilePath(file.Name())
 				photoMessage := tgbotapi.NewPhoto(chatID, photo)
-				photoMessage.Caption = "Прогноз магнитных бурь на три дня"
+				photoMessage.Caption = txt
 				bot.Send(photoMessage)
 				os.Remove(file.Name())
 			}
