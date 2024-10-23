@@ -6,15 +6,20 @@ import (
 	"github.com/rturovtsev/telegram-bot-weather/internal/handler"
 	"log"
 	"os"
+	"strconv"
 )
 
 var chatIDs []int64
 var chatFile string
+var adminID int64
+var err error
+var bot *tgbotapi.BotAPI
 
 func main() {
 	botToken := os.Getenv("BOT_TOKEN")
 	yandexToken := os.Getenv("YANDEX_TOKEN")
 	env := os.Getenv("ENV")
+	adminIDEnv := os.Getenv("ADMIN_ID")
 
 	if botToken == "" {
 		log.Fatal("BOT_TOKEN is not set")
@@ -25,9 +30,16 @@ func main() {
 		chatFile = "/app/data/chats.json"
 	}
 
+	if adminIDEnv != "" {
+		adminID, err = strconv.ParseInt(adminIDEnv, 10, 64)
+		if err != nil {
+			log.Printf("Error admin id convert: %v", err)
+		}
+	}
+
 	chatIDs = chat.LoadChatIDs(chatFile)
 
-	bot, err := tgbotapi.NewBotAPI(botToken)
+	bot, err = tgbotapi.NewBotAPI(botToken)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -44,6 +56,20 @@ func main() {
 	updates := bot.GetUpdatesChan(u)
 
 	for update := range updates {
+		if update.Message != nil && adminID != 0 {
+			if update.Message.IsCommand() {
+				switch update.Message.Command() {
+				case "send":
+					if update.Message.From.ID == adminID {
+						handler.SendDailyMessage(bot, chatIDs, yandexToken)
+					} else {
+						msg := tgbotapi.NewMessage(update.Message.Chat.ID, "У вас нет разрешения на использование этой команды.")
+						bot.Send(msg)
+					}
+				}
+			}
+		}
+
 		if update.MyChatMember != nil {
 			chatType := update.MyChatMember.Chat.Type
 
