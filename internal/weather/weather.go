@@ -70,7 +70,10 @@ func GetWeather(url string, token string) string {
 	if !umbrellaNeeded {
 		umbrellaText = "Зонт не нужен"
 	} else {
-		umbrellaText = fmt.Sprintf("Зонт нужен %s с вероятностью %d%%", rainHours, int(dayShort.PrecProb))
+		umbrellaText = fmt.Sprintf("Зонт нужен %s", rainHours)
+		if int(dayShort.PrecProb) > 0 {
+			umbrellaText = fmt.Sprintf("%s с вероятностью %d%%", umbrellaText, int(dayShort.PrecProb))
+		}
 	}
 
 	text := fmt.Sprintf(
