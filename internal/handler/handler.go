@@ -50,14 +50,17 @@ func SendDailyMessage(bot *tgbotapi.BotAPI, chatIDs []int64, token string) {
 		}
 		txt := "Прогноз магнитных бурь на три дня\n\n"
 		txt += "================\n\n"
-		txt += "Тверь\n"
+		txt += "<strong>Тверь</strong>\n"
 		txt += weather.GetWeather(weather.TverURL, token)
-		txt += "\n\nСколково\n"
+		txt += "\n\n<strong>Сколково</strong>\n"
 		txt += weather.GetWeather(weather.MoscowURL, token)
 
 		photo := tgbotapi.FilePath(file.Name())
 		photoMessage := tgbotapi.NewPhoto(chatID, photo)
 		photoMessage.Caption = txt
+		photoMessage.ParseMode = tgbotapi.ModeHTML
+		photoMessage.DisableNotification = true
+
 		bot.Send(photoMessage)
 		os.Remove(file.Name())
 	}
