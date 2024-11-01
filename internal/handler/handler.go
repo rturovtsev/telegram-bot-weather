@@ -14,7 +14,7 @@ func ScheduleMessage(bot *tgbotapi.BotAPI, chatIDs []int64, token string) {
 	go func() {
 		for {
 			now := time.Now()
-			next := time.Date(now.Year(), now.Month(), now.Day(), 8, 0, 0, 0, now.Location())
+			next := time.Date(now.Year(), now.Month(), now.Day(), 7, 0, 0, 0, now.Location())
 			if next.Before(now) {
 				next = next.Add(24 * time.Hour)
 			}
