@@ -14,6 +14,9 @@ import (
 const TverURL = "https://api.weather.yandex.ru/v2/forecast?lat=56.83270&lon=35.93039"
 const MoscowURL = "https://api.weather.yandex.ru/v2/forecast?lat=55.70077&lon=37.360078"
 
+const PrecTypeRain = 1
+const PrecTypeSnowRain = 2
+
 func GetWeather(url string, token string) string {
 	weather := makeRequest(url, token)
 
@@ -105,7 +108,7 @@ func checkForRainBlocks(hours []model.Hour) (bool, string) {
 			continue
 		}
 
-		if hour.PrecType != 0 {
+		if hour.PrecType == PrecTypeRain || hour.PrecType == PrecTypeSnowRain {
 			umbrellaNeeded = true
 			tmpHour = append(tmpHour, hourInt)
 		} else {
