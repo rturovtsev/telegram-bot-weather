@@ -83,11 +83,11 @@ func main() {
 				}
 			} else if chatType == "private" {
 				if update.MyChatMember.NewChatMember.Status == "left" || update.MyChatMember.NewChatMember.Status == "kicked" {
-					chat.RemoveChatID(update.Message.Chat.ID, chatFile)
-					log.Printf("Удаление из личного чата [%s] %s", update.Message.From.UserName, update.Message.Text)
+					chat.RemoveChatID(update.MyChatMember.Chat.ID, chatFile)
+					log.Printf("Удаление из личного чата [%s] %s", update.MyChatMember.From.UserName, update.MyChatMember.Chat.Title)
 				} else {
-					chat.AddChatID(update.Message.Chat.ID, chatFile)
-					log.Printf("Добавление в личный чат [%s] %s", update.Message.From.UserName, update.Message.Text)
+					chat.AddChatID(update.MyChatMember.Chat.ID, chatFile)
+					log.Printf("Добавление в личный чат [%s] %s", update.MyChatMember.From.UserName, update.MyChatMember.Chat.Title)
 				}
 			} else if chatType == "group" || chatType == "supergroup" {
 				if update.MyChatMember.NewChatMember.Status == "member" {
