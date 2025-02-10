@@ -21,6 +21,7 @@ func GetWeather(url string, token string) string {
 	weather := makeRequest(url, token)
 
 	factTemp := weather.Fact.Temp
+	factPressureMm := weather.Fact.PressureMm
 	feelsLike := weather.Fact.FeelsLike
 	condition := weather.Fact.Condition
 
@@ -81,12 +82,14 @@ func GetWeather(url string, token string) string {
 
 	text := fmt.Sprintf(
 		"%s\nТемпература сейчас %.0f°C, %s, ощущается как %.0f°C\n"+
+			"Давление %.0f мм рт. ст.\n"+
 			"В течение дня температура от %.0f°C до %.0f°C\n"+
 			"Ветер %.1f м/с, порывы до %.1f м/с",
 		umbrellaText,
 		factTemp,
 		condition,
 		feelsLike,
+		factPressureMm,
 		tempMin,
 		tempMax,
 		windSpeed,
