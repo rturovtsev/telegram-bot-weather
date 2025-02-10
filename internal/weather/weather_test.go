@@ -20,9 +20,10 @@ func TestGetWeather(t *testing.T) {
 			name: "Sunny day with rain later",
 			mockResponse: model.Response{
 				Fact: model.Fact{
-					Temp:      10,
-					FeelsLike: 7,
-					Condition: "clear",
+					Temp:       10,
+					FeelsLike:  7,
+					Condition:  "clear",
+					PressureMm: 740,
 				},
 				Forecasts: []model.Forecast{
 					{
@@ -47,6 +48,7 @@ func TestGetWeather(t *testing.T) {
 			},
 			expectedOutput: "Зонт нужен с 13:00 до 14:00 с вероятностью 30%\n" +
 				"Температура сейчас 10°C, ясно, ощущается как 7°C\n" +
+				"Давление 740 мм рт. ст.\n" +
 				"В течение дня температура от 5°C до 15°C\n" +
 				"Ветер 2.0 м/с, порывы до 2.6 м/с",
 		},
