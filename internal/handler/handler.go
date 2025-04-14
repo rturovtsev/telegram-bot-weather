@@ -2,11 +2,7 @@ package handler
 
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/rturovtsev/telegram-bot-weather/internal/images"
 	"github.com/rturovtsev/telegram-bot-weather/internal/weather"
-	"image/png"
-	"log"
-	"os"
 	"time"
 )
 
@@ -28,7 +24,7 @@ func ScheduleMessage(bot *tgbotapi.BotAPI, chatIDs []int64, token string) {
 
 func SendDailyMessage(bot *tgbotapi.BotAPI, chatIDs []int64, token string) {
 	for _, chatID := range chatIDs {
-		srcImage, err := images.DownloadImage("https://xras.ru/upload_test/files/fc3_REL0.png")
+		/*srcImage, err := images.DownloadImage("https://xras.ru/upload_test/files/fc3_REL0.png")
 		if err != nil {
 			log.Println("Ошибка загрузки изображения:", err)
 			continue
@@ -47,7 +43,7 @@ func SendDailyMessage(bot *tgbotapi.BotAPI, chatIDs []int64, token string) {
 		if err != nil {
 			log.Println("Ошибка при сохранении изображения:", err)
 			continue
-		}
+		}*/
 		txt := "Прогноз магнитных бурь на три дня\n\n"
 		txt += "================\n\n"
 		txt += "<strong>Тверь</strong>\n"
@@ -55,13 +51,17 @@ func SendDailyMessage(bot *tgbotapi.BotAPI, chatIDs []int64, token string) {
 		txt += "\n\n<strong>Сколково</strong>\n"
 		txt += weather.GetWeather(weather.MoscowURL, token)
 
-		photo := tgbotapi.FilePath(file.Name())
+		msg := tgbotapi.NewMessage(chatID, txt)
+		msg.ParseMode = tgbotapi.ModeHTML
+		msg.DisableNotification = true
+		bot.Send(msg)
+
+		/*photo := tgbotapi.FilePath(file.Name())
 		photoMessage := tgbotapi.NewPhoto(chatID, photo)
 		photoMessage.Caption = txt
 		photoMessage.ParseMode = tgbotapi.ModeHTML
 		photoMessage.DisableNotification = true
-
 		bot.Send(photoMessage)
-		os.Remove(file.Name())
+		os.Remove(file.Name())*/
 	}
 }
