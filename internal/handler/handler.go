@@ -44,9 +44,9 @@ func SendDailyMessage(bot *tgbotapi.BotAPI, chatIDs []int64, token string) {
 			log.Println("Ошибка при сохранении изображения:", err)
 			continue
 		}*/
-		txt := "Прогноз магнитных бурь на три дня\n\n"
-		txt += "================\n\n"
-		txt += "<strong>Тверь</strong>\n"
+		//txt := "Прогноз магнитных бурь на три дня\n\n"
+		//txt += "================\n\n"
+		txt := "<strong>Тверь</strong>\n"
 		txt += weather.GetWeather(weather.TverURL, token)
 		txt += "\n\n<strong>Сколково</strong>\n"
 		txt += weather.GetWeather(weather.MoscowURL, token)
