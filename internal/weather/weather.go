@@ -30,6 +30,7 @@ func GetWeather(url string, token string) string {
 	tempMax := dayShort.Temp
 	windSpeed := dayShort.WindSpeed
 	windGust := dayShort.WindGust
+	uvIndex := dayShort.UvIndex
 
 	umbrellaNeeded, rainHours := checkForRainBlocks(weather.Forecasts[0].Hours)
 
@@ -79,12 +80,20 @@ func GetWeather(url string, token string) string {
 			umbrellaText = fmt.Sprintf("%s с вероятностью %d%%", umbrellaText, int(dayShort.PrecProb))
 		}
 	}
+	var uvText string
+	if uvIndex >= 3 && uvIndex < 6 {
+		uvText = "\nРекомендуется использование солнцезащитного крема"
+	} else if uvIndex >= 6 {
+		uvText = "\nИспользование солнцезащитного крема <strong>обязательно</strong>"
+	}
 
 	text := fmt.Sprintf(
-		"%s\nТемпература сейчас %.0f°C, %s, ощущается как %.0f°C\n"+
+		"%s\n"+
+			"Температура сейчас %.0f°C, %s, ощущается как %.0f°C\n"+
 			"Давление %.0f мм рт. ст.\n"+
 			"В течение дня температура от %.0f°C до %.0f°C\n"+
-			"Ветер %.1f м/с, порывы до %.1f м/с",
+			"Ветер %.1f м/с, порывы до %.1f м/с"+
+			"%s",
 		umbrellaText,
 		factTemp,
 		condition,
@@ -94,6 +103,7 @@ func GetWeather(url string, token string) string {
 		tempMax,
 		windSpeed,
 		windGust,
+		uvText,
 	)
 
 	return text
