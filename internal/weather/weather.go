@@ -81,10 +81,10 @@ func GetWeather(url string, token string) string {
 		}
 	}
 	var uvText string
-	if uvIndex >= 3 && uvIndex < 6 {
-		uvText = "\nРекомендуется использование солнцезащитного крема"
+	if uvIndex >= 4 && uvIndex < 6 {
+		uvText = "\nРекомендуется использование SPF крема"
 	} else if uvIndex >= 6 {
-		uvText = "\nИспользование солнцезащитного крема <strong>обязательно</strong>"
+		uvText = "\nИспользование SPF 50+ крема <strong>обязательно</strong>"
 	}
 
 	text := fmt.Sprintf(
