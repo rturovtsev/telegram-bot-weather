@@ -51,6 +51,7 @@ func SendDailyMessage(bot *tgbotapi.BotAPI, chatIDs []int64, token string) {
 		
 
 		targetDate := time.Date(2025, time.May, 31, 0, 0, 0, 0, time.UTC)
+		kislovodsTargetDate := time.Date(2025, time.July, 26, 0, 0, 0, 0, time.UTC)
     	currentTime := time.Now()
 		if currentTime.Before(targetDate) {
 			txt += "\n\n<strong>Анталия</strong>\n"
@@ -58,6 +59,11 @@ func SendDailyMessage(bot *tgbotapi.BotAPI, chatIDs []int64, token string) {
 		} else {
 			txt += "\n\n<strong>Сколково</strong>\n"
 			txt += weather.GetWeather(weather.MoscowURL, token)
+		}
+
+		if currentTime.Before(kislovodsTargetDate) {
+			txt += "\n\n<strong>Кисловодск</strong>\n"
+			txt += weather.GetWeather(weather.KislovodsURL, token)
 		}
 
 		msg := tgbotapi.NewMessage(chatID, txt)
