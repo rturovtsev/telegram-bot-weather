@@ -14,7 +14,7 @@ import (
 const TverURL = "https://api.weather.yandex.ru/v2/forecast?lat=56.83270&lon=35.93039"
 const MoscowURL = "https://api.weather.yandex.ru/v2/forecast?lat=55.70077&lon=37.360078"
 const AntaliaURL = "https://api.weather.yandex.ru/v2/forecast?lat=36.88590&lon=30.67414"
-const KislovodsURL = "https://api.weather.yandex.ru/v2/forecast?lat=43.90551&lon=42.71571"
+const KislovodsURL = "https://api.weather.yandex.ru/v2/forecast?lat=44.05180&lon=42.86443"
 
 const PrecTypeRain = 1
 const PrecTypeSnowRain = 2
